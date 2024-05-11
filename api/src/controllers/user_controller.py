@@ -4,9 +4,8 @@ from src.models.user_model import User
 from src.services.user_service import UserService  
 
 users = Namespace('users')
-api = Namespace('api')  # Add this line to define the 'api' object
-user_service = UserService()  # Instantiate UserService
-
+api = Namespace('api')  
+user_service = UserService()  
 
 @users.route('/signin')
 class SignIn(Resource):
@@ -24,10 +23,13 @@ class SignUp(Resource):
     @users.expect(User)
     def post(self):
         data = request.json
+        print(data['email'])
+        print(data['password'])
         token = user_service.signup(data['email'], data['password'])
         if token:
             return {'message': 'Signed up successfully.', 'token': token}, 200
         return {'message': 'Email already exists.'}, 400
+
     
 @users.route('/getuser/<email>')
 class GetUser(Resource):

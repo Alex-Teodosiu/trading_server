@@ -1,15 +1,20 @@
 import pyodbc
 from dotenv import load_dotenv
 
-def get_db_connection():
-    load_dotenv()
 
-    server = 'tradingplatformserver.database.windows.net'
-    database = 'tradingplatformdb'
-    username = 'CloudSA25ca4491'
-    password = 'Azure123!'
-    driver= '{ODBC Driver 17 for SQL Server}'
+class AzureSQLDatabase:
+    def __init__(self):
+        self._server = 'tradingplatformserver.database.windows.net'
+        self._database = 'tradingplatformdb'
+        self._username = 'CloudSA25ca4491'
+        self._password = 'Azure123!'
+        self._driver = '{ODBC Driver 17 for SQL Server}'
+        
 
-    connection = pyodbc.connect('DRIVER=' + driver + ';SERVER=' + server + ';PORT=1433;DATABASE=' + database + ';UID=' + username + ';PWD=' + password)
+    def get_db_connection(self):
+        load_dotenv()
+        connection = pyodbc.connect(self.get_connection_string())
+        return connection
 
-    return connection
+    def get_connection_string(self):
+        return 'DRIVER=' + self._driver + ';SERVER=' + self._server + ';PORT=1433;DATABASE=' + self._database + ';UID=' + self._username + ';PWD=' + self._password

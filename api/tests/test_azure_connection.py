@@ -12,15 +12,17 @@ def test_azure_connection():
 
     cursor = cnxn.cursor()
 
-    first_name = 'John'
-    last_name = 'Doe'
+    email = 'john@gmail.com'
+    password = 'Qwerty123!'
 
-    cursor.execute("INSERT INTO Persons (FirstName, LastName) VALUES (?, ?)", first_name, last_name)
+    cursor.execute("INSERT INTO [user] (email, password) VALUES (?, ?)", email, password)
     cnxn.commit()
 
-    cursor.execute("SELECT * FROM Persons")
+    cursor.execute("SELECT * FROM [user] where email = ? and password = ?", email, password)
     rows = cursor.fetchall()
     for row in rows:
-        assert row[1] == first_name and row[2] == last_name
+        assert row[1] == email and row[2] == password
 
     cnxn.close()
+
+

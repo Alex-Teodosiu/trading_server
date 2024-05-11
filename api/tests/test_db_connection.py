@@ -1,11 +1,13 @@
 from src.data_access import user_repository
 
+user_repository = user_repository.UserRepository()
+
 def test_get_users():
     users = user_repository.get_users()
     print(users)
 
 def test_get_user_by_id():
-    user = user_repository.get_user_by_id(1)  # replace 1 with an actual user_id
+    user = user_repository.get_user_by_email("alexandru.mihail.teo@gmail.com")  
     print(user)
 
 def test_db_connection():
