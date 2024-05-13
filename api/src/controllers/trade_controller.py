@@ -15,17 +15,38 @@ class BaseResource(Resource):
         super().__init__(*args, **kwargs)
         self._trade_service = TradeService()
 
-
-@trades.route('/create-trade/<account_id>')
+# Will need the either the account id or trading account id that I will join to get the api key
+# For now, use default credz
+@trades.route('/create-trade')
 class TradeCreation(BaseResource):
-    @api.expect(TradingAccount)
-    def post(self, account_id):
-        # trade = api.payload
-        trade = {
-          "symbol": "AAPL",
-          "qty": 1,
-          "side": "buy",
-          "type": "market",
-          "time_in_force": "day"
-        }
-        return self._trade_service.create_trade(account_id, trade), 201
+    def post(self):
+        return self._trade_service.create_order(), 201
+    
+@trades.route('/create-limit-trade')
+class LimitTradeCreation(BaseResource):
+    def post(self):
+        return self._trade_service.create_limit_order(), 201
+    
+@trades.route('/get-all-trades')
+class GetAllTrades(BaseResource):
+    def get(self):
+        return self._trade_service.get_all_orders(), 200
+    
+
+# Make this an update or delete request
+@trades.route('/cancel-all-orders')
+class CancelAllOrders(BaseResource):
+    def post(self):
+        return self._trade_service.cancel_all_orders(), 200
+    
+  
+@trades.route('/get-all-open-trades')
+class GetAllOpenTrades(BaseResource):
+    def get(self):
+        return self._trade_service.get_all_open_trades(), 200
+    
+
+@trades.route('/close-all-open-positions')
+class CloseAllOpenPositions(BaseResource):
+    def post(self):
+        return self._trade_service.close_all_open_positions(), 200

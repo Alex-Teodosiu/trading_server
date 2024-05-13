@@ -13,43 +13,94 @@ class UserService:
         self._user_repository = UserRepository()
 
     def get_user_by_email(self, email):
-        user_row = self._user_repository.get_user_by_email(email)
-        if user_row is not None:
-            user = User(user_row[1], user_row[2])
-            user = user.to_dict()
-            print(user.__str__())
-        else:
-            user = None
-        return user
+        user = self._user_repository.get_user_by_email(email)
+        if user is None:
+            return None
+        
+        print("User service")
+        print(user.__str__())
+        return user.to_dict()
+
 
     def signup(self, email, password):
-        hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
-        print(hashed_password)
-        print(email)
-        user = User(email=email, password=hashed_password)
-        print(user.__str__())
-        self._user_repository.save_user(user)
-        return self.generate_token(identity=email)
+        try:
+            if not email:
+                return {'message': 'Email is required.'}, 400
+            self.validate_email(email)
+            self.validate_password(password)
+
+            existing_user = self._user_repository.get_user_by_email(email)
+            if existing_user is not None:
+                return {'message': 'A user with this email already exists.'}, 400
+
+            hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+            user = User(email=email, password=hashed_password)
+            self._user_repository.save_user(user)
+            return self.generate_token(identity=email), 200
+        except Exception as e:
+            return {'error': 'An error occurred: ' + str(e)}, 500
+    
 
     def signin(self, email, password):
         try:
-            user = self._user_repository.get_user_by_email(email)
+            if not email:
+                return {'message': 'Email is required.'}, 400
+            self.validate_email(email)
+            self.validate_password(password)
 
-            if user and check_password_hash(user.password, password):
-                token = self.generate_token(identity=email)
-                return {'access_token': token}, 200
-            return jsonify({'error': 'Invalid email or password'}), 401
+            existing_user = self._user_repository.get_user_by_email(email)
+            if existing_user is None:
+                return {'message': 'A user with this email does not exist.'}, 400
 
+            if not check_password_hash(existing_user.get_password(), password):
+                return {'message': 'Invalid password.'}, 400
+
+            return {'message': 'Signed in successfully.', 'token': self.generate_token(identity=email)}, 200
         except Exception as e:
-            return jsonify({'error': 'An error occurred: ' + str(e)}), 500
+            return {'error': 'An error occurred: ' + str(e)}, 500
+    
+
+    def delete_user(self, user):
+        try:
+            db_user = self._user_repository.get_user_by_email(user.get_email())
+            if not db_user:
+                return {'message': 'User not found'}, 404
+            print("user found")
+            print(db_user.id)
+            if check_password_hash(db_user.get_password(), user.get_password()):
+                try:
+                    print("Deleting user")
+                    self._user_repository.delete_user(db_user)
+                    return {'message': 'User deleted successfully'}, 200
+                except Exception as e:
+                    return {'error': 'An error occurred: ' + str(e)}, 500
+        except Exception as e:
+            return {'error': 'An error occurred: ' + str(e)}, 500
+        
+    def update_user(self, user):
+        try:
+            db_user = self._user_repository.get_user_by_email(user.get_email())
+            if not db_user:
+                return {'message': 'User not found'}, 404
+            if check_password_hash(db_user.get_password(), user.get_password()):
+                try:
+                    self._user_repository.update_user(user)
+                    return {'message': 'User updated successfully'}, 200
+                except Exception as e:
+                    return {'error': 'An error occurred: ' + str(e)}, 500
+        except Exception as e:
+            return {'error': 'An error occurred: ' + str(e)}, 500
 
 
     def validate_email(self, email):
+        if not email:
+            raise ValueError("Email cannot be empty")
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             raise ValueError("Invalid email address")
-        
 
     def validate_password(self, password):
+        if not password:
+            raise ValueError("Password cannot be empty")
         if len(password) < 5:
             raise ValueError("Password must be at least 5 characters long")
         if not re.search(r"\d", password):
@@ -60,7 +111,6 @@ class UserService:
             raise ValueError("Password must contain at least one lowercase letter")
         if not re.search(r"[!@#$%^&*()\-_=+{};:,<.>]", password):
             raise ValueError("Password must contain at least one special character")
-        pass
 
     
     def generate_token(self, identity):

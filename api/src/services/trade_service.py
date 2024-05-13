@@ -1,8 +1,9 @@
-import json
+from alpaca.trading.client import TradingClient
+from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest, GetOrdersRequest
+from alpaca.trading.enums import OrderSide, TimeInForce, QueryOrderStatus
 from src.config.dev_config import DevConfig
 from src.data_access.trading_account_repository import TradingAccountRepository
 #  broker --> from src.models.trading_account_model import TradingAccount
-from alpaca.trading.client import TradingClient
 import requests
 
 class TradeService():
@@ -17,17 +18,61 @@ class TradeService():
         self._secret_key = config.ALPACA_API_SECRET
         self._trading_client = TradingClient(self._api_key, self._secret_key, paper=True)
     
-    def get_trading_account(self):
-        account = self._trading_client.get_account()
-        return account
+
+    def create_order(self):
+        # preparing orders
+        market_order_data = MarketOrderRequest(
+                            symbol="SPY",
+                            qty=0.023,
+                            side=OrderSide.BUY,
+                            time_in_force=TimeInForce.DAY
+                            )
+        # Market order
+        market_order = self._trading_client.submit_order(
+                        order_data=market_order_data
+                       )
+
+        return market_order
     
 
-    def create_trade(self, account_id, trade):
-        url = f"{self._base_url}/v1/trading/accounts/{account_id}/orders"
-        response = requests.post(url, headers=self._headers, data=json.dumps(trade))
-        print(response.text)
+    def create_limit_order(self):
+        limit_order_data = LimitOrderRequest(
+                    symbol="BTC/USD",
+                    limit_price=17000,
+                    notional=4000,
+                    side=OrderSide.SELL,
+                    time_in_force=TimeInForce.FOK
+                   )
+        # Limit order
+        limit_order = self._trading_client.submit_order(
+                        order_data=limit_order_data
+                      )
+        return limit_order
+    
 
-        if response.status_code != 200:
-            raise Exception(f"Request to create trade failed with status {response.status_code}. Response: {response.text}")
+    def get_all_orders(self):
+        # params to filter orders by
+        request_params = GetOrdersRequest(
+                            status=QueryOrderStatus.OPEN,
+                            side=OrderSide.SELL
+                         )
+        # orders that satisfy params
+        orders = self._trading_client.get_orders(filter=request_params)
+        return orders
 
-        return response.json()
+
+    def cancel_all_orders(self):
+        # attempt to cancel all open orders
+        cancel_statuses = self._trading_client.cancel_orders()
+        return cancel_statuses
+
+
+    def get_all_open_trades(self):
+        # get all open trades
+        open_trades = self._trading_client.get_all_positions()
+        return open_trades
+    
+
+    def close_all_open_trades(self):
+        # closes all position AND also cancels all open orders
+        self._trading_client.close_all_positions(cancel_orders=True)
