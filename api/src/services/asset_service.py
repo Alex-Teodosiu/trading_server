@@ -30,7 +30,7 @@ class AssetService:
         # Filter assets_data to only include assets from the NYSE
         assets_data = [asset for asset in assets_data if 'NYSE' in asset.exchange]
         assets = []
-        for asset_data in assets_data[1:10]:
+        for asset_data in assets_data[1:100]:
             asset = self.create_asset_from_data(asset_data)
             assets.append(asset)
         assets_dict = [asset.to_dict() for asset in assets]
@@ -43,7 +43,7 @@ class AssetService:
         # Filter assets_data to only include assets from the NYSE
         assets_data = [asset for asset in assets_data if 'NYSE' in asset.exchange]
         assets = []
-        for asset_data in assets_data[1:10]:
+        for asset_data in assets_data[1:100]:
             asset = self.create_asset_from_data(asset_data)
             assets.append(asset)
         assets_dict = [asset.to_dict() for asset in assets]
@@ -56,7 +56,7 @@ class AssetService:
         # Filter assets_data to only include assets from the NYSE
         assets_data = [asset for asset in assets_data if 'NYSE' in asset.exchange]
         assets = []
-        for asset_data in assets_data[1:10]:
+        for asset_data in assets_data[1:100]:
             asset = self.create_asset_from_data(asset_data)
             assets.append(asset)
         assets_dict = [asset.to_dict() for asset in assets]
@@ -69,7 +69,7 @@ class AssetService:
         # Filter assets_data to only include assets from the NYSE
         assets_data = [asset for asset in assets_data if 'NYSE' in asset.exchange]
         assets = []
-        for asset_data in assets_data[1:10]:
+        for asset_data in assets_data[1:100]:
             asset = self.create_asset_from_data(asset_data)
             assets.append(asset)
         assets_dict = [asset.to_dict() for asset in assets]
@@ -94,7 +94,7 @@ class AssetService:
         # Filter assets_data to only include assets from the NYSE
         assets_data = [asset for asset in assets_data if 'NYSE' in asset.exchange]
         assets = []
-        for asset_data in assets_data[1:10]:
+        for asset_data in assets_data[1:100]:
             asset = self.create_asset_from_data(asset_data)
             assets.append(asset)
         assets_dict = [asset.to_dict() for asset in assets]

@@ -22,20 +22,16 @@ class TradingAccountService():
             try:
                 account_data = temp_trading_client.get_account()
             except Exception as e:
-                print(f"An error occurred while getting the account from the Alpaca server: {e}")
-                account_data = None
-            print("account service")
-            print(account_data)
+                return(f"An error occurred while getting the account from the Alpaca server: {e}")
             
             account = self.create_trading_account_object(account_data, user_id, api_key, secret)
-            print("")
-            print(account.__str__())
             try:
-                db_account = self._trading_account_repository.save_account(user_id, account)
+                self._trading_account_repository.save_account(user_id, account)
             except Exception as e:
-                print(f"An error occurred while validating the account: {e}")
-                db_account = None
-            return db_account.to_dict()
+                return(f"An error occurred while validating the account: {e}")
+                
+            account = self.create_trading_account_object(account_data, user_id, api_key, secret)
+            return account.to_dict()
         except APIError as e:
             return str(e)
         

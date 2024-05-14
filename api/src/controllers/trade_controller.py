@@ -1,3 +1,5 @@
+from src.models.limit_order_model import LimitOrder
+from src.models.order_model import Order
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from werkzeug.security import generate_password_hash
@@ -9,44 +11,70 @@ from flask_restx import Namespace, Resource
 
 trades = Namespace('trades')
 api = Namespace('api') 
+trade_service = TradeService()
 
-class BaseResource(Resource):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._trade_service = TradeService()
-
-# Will need the either the account id or trading account id that I will join to get the api key
-# For now, use default credz
-@trades.route('/create-trade')
-class TradeCreation(BaseResource):
+@trades.route('/create-order')
+class TradeCreation(Resource):
+    @trades.expect(Order)
     def post(self):
-        return self._trade_service.create_order(), 201
+        data = request.json
+        user_id = data['user_id']
+        order = Order(
+            symbol=data['symbol'],
+            # qty=data['qty'],
+            notional=data['notional'],
+            side=data['side'],
+            time_in_force=data['time_in_force']
+        )
+        result = trade_service.create_order(user_id, order)
+        return result
     
-@trades.route('/create-limit-trade')
-class LimitTradeCreation(BaseResource):
+    
+@trades.route('/create-limit-order')
+class LimitTradeCreation(Resource):
+    @trades.expect(LimitOrder)
     def post(self):
-        return self._trade_service.create_limit_order(), 201
+        data = request.json
+        user_id = data['user_id']
+        limit_order = LimitOrder(
+            symbol=data['symbol'],
+            limit_price=data['limit_price'],
+            notional=data['notional'],
+            side=data['side'],
+            time_in_force=data['time_in_force']
+        )
+        result = trade_service.create_limit_order(user_id, limit_order)
+        return result
     
-@trades.route('/get-all-trades')
-class GetAllTrades(BaseResource):
+    
+@trades.route('/get-all-orders')
+@api.doc(params={'user_id':'User ID is required'})
+class GetAllTrades(Resource):
     def get(self):
-        return self._trade_service.get_all_orders(), 200
+        user_id = request.args.get('user_id')
+        return trade_service.get_all_orders(user_id), 200
     
 
 # Make this an update or delete request
 @trades.route('/cancel-all-orders')
-class CancelAllOrders(BaseResource):
-    def post(self):
-        return self._trade_service.cancel_all_orders(), 200
+@api.doc(params={'user_id':'User ID is required'})
+class CancelAllOrders(Resource):
+    def delete(self):
+        user_id = request.args.get('user_id')
+        return trade_service.cancel_all_orders(user_id), 200
     
   
-@trades.route('/get-all-open-trades')
-class GetAllOpenTrades(BaseResource):
+@trades.route('/get-all-open-positions')
+@api.doc(params={'user_id':'User ID is required'})
+class GetAllOpenTrades(Resource):
     def get(self):
-        return self._trade_service.get_all_open_trades(), 200
+        user_id = request.args.get('user_id')
+        return trade_service.get_all_open_positions(user_id), 200
     
 
 @trades.route('/close-all-open-positions')
-class CloseAllOpenPositions(BaseResource):
-    def post(self):
-        return self._trade_service.close_all_open_positions(), 200
+@api.doc(params={'user_id':'User ID is required'})
+class CloseAllOpenPositions(Resource):
+    def delete(self):
+        user_id = request.args.get('user_id')
+        return trade_service.close_all_open_positions(user_id), 200

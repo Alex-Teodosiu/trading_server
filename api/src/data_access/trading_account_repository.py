@@ -97,10 +97,10 @@ class TradingAccountRepository:
         return id
         
 
-    def get_account_by_id(self, id):
+    def get_account_by_user_id(self, user_id):
         conn = self._db.get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM trading_account WHERE ID = ?", id)
+        cursor.execute("SELECT * FROM trading_account WHERE user_id = ?", user_id)
         account = cursor.fetchone()
         print(account)
         conn.close()
