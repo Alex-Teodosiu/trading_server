@@ -24,11 +24,12 @@ class Order:
     def to_dict(self):
         return {
             'symbol': self.symbol,
-            'qty': self.qty,
+            #'qty': self.qty,
+            'notional': self.notional,
             'side': self.side,
             'time_in_force': self.time_in_force,
         }
 
     def __str__(self):
-        return f"Order({self.symbol}, {self.qty}, {self.side}, {self.time_in_force})"
+        return f"Order({self.symbol}, {self.notional}, {self.side}, {self.time_in_force})"
 

@@ -1,7 +1,5 @@
 class ClosedPosition:
-    def __init__(self, symbol, api_status, id, client_order_id, created_at, updated_at, submitted_at, filled_at, expired_at, canceled_at, failed_at, replaced_at, replaced_by, replaces, asset_id, asset_class, notional, qty, filled_qty, filled_avg_price, order_class, order_type, type, side, time_in_force, limit_price, stop_price, status, extended_hours, legs, trail_percent, trail_price, hwm, subtag, source):
-        self.symbol = symbol
-        self.api_status = status
+    def __init__(self, id, client_order_id, created_at, updated_at, submitted_at, filled_at, expired_at, canceled_at, failed_at, replaced_at, replaced_by, replaces, asset_id, asset_class, notional, qty, filled_qty, filled_avg_price, order_class, order_type, type, side, time_in_force, limit_price, stop_price, status, extended_hours, legs, trail_percent, trail_price, hwm, subtag, source):
         self.id = id
         self.client_order_id = client_order_id
         self.created_at = created_at
@@ -38,8 +36,6 @@ class ClosedPosition:
 
     def to_dict(self):
         return {
-            'symbol': self.symbol,
-            'api_status': self.status,
             'id': self.id,
             'client_order_id': self.client_order_id,
             'created_at': self.created_at,

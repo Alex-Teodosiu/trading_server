@@ -1,8 +1,6 @@
 from flask import request
-from flask_restx import Namespace, Resource, fields, reqparse
-from werkzeug.security import generate_password_hash
+from flask_restx import Namespace, Resource
 from src.services.market_data_service import MarketDataService
-from src.services.trade_service import TradeService
 from flask_restx import Namespace, Resource
 
 

@@ -16,9 +16,6 @@ class UserService:
         user = self._user_repository.get_user_by_email(email)
         if user is None:
             return None
-        
-        print("User service")
-        print(user.__str__())
         return user.to_dict()
 
 

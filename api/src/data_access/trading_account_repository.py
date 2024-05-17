@@ -102,7 +102,6 @@ class TradingAccountRepository:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM trading_account WHERE user_id = ?", user_id)
         account = cursor.fetchone()
-        print(account)
         conn.close()
         return account
 
