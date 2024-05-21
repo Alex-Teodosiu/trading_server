@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource
 from src.services.position_service import PositionService
-from flask_restx import Namespace, Resource
+
 
 
 positions = Namespace('positions')

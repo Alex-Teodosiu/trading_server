@@ -18,9 +18,6 @@ class OrderService():
             temp_trading_client = TradingClient(api_key, secret_key, paper=True)
         except Exception:
             return("Failed to get trading account for user_id provided.")
-        api_key = trading_account.api_key
-        secret_key = trading_account.api_secret
-        temp_trading_client = TradingClient(api_key, secret_key, paper=True)
         # prepare order data
         market_order_data = MarketOrderRequest(
                     symbol=order.get_symbol(),
