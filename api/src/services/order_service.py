@@ -12,6 +12,7 @@ class OrderService():
 
     def create_order(self, user_id, order):
         try:
+            print(order)
             trading_account = self._trading_account_repository.get_account_by_user_id(user_id)
             api_key = trading_account.api_key
             secret_key = trading_account.api_secret

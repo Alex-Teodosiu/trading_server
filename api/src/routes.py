@@ -7,7 +7,6 @@ from .controllers.position_controller import positions
 from .controllers.market_data_controller import market_data
 from .controllers.algorithm_controller import algorithm
 from .controllers.market_status_controller import marketstatus
-from .controllers.news_controller import news
 
 def initialize_routes(api: Api):
     api.add_namespace(users, path="/users")
@@ -18,4 +17,3 @@ def initialize_routes(api: Api):
     api.add_namespace(market_data, path="/market-data")
     api.add_namespace(algorithm, path="/algorithm")
     api.add_namespace(marketstatus, path="/market-status")
-    api.add_namespace(news, path="/news")
